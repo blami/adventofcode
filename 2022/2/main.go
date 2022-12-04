@@ -4,9 +4,9 @@
 package main
 
 import (
-	"os"
 	"bufio"
 	"log"
+	"os"
 )
 
 // Score the round as sum of own shape and outcome of round according to rules.
@@ -23,10 +23,10 @@ func score(p1, p2 byte) int {
 	case p1 == p2:
 		s += 3
 	// wins
-	case (p2 - 1 == p1) || (p2 == 1 && p1 == 3):
+	case (p2-1 == p1) || (p2 == 1 && p1 == 3):
 		s += 6
-	// loses (no need to run through this branch as score is 0
-	//case (p2 == p1 - 1) || (p1 == 1 && p2 == 3):
+		// loses (no need to run through this branch as score is 0
+		//case (p2 == p1 - 1) || (p1 == 1 && p2 == 3):
 	}
 
 	return s
@@ -47,13 +47,17 @@ func pick(p1 byte, e byte) byte {
 	case 1:
 		x = p1 - 1
 	}
-	if x > 3 { return 1 }
-	if x < 1 { return 3 }
+	if x > 3 {
+		return 1
+	}
+	if x < 1 {
+		return 3
+	}
 	return x
 }
 
 func main() {
-	sum1 := 0	// total score for part 1
+	sum1 := 0 // total score for part 1
 	sum2 := 0 // total score for part 2
 
 	s := bufio.NewScanner(os.Stdin)
@@ -62,11 +66,11 @@ func main() {
 		// normalize inputs, both ABC and XYZ are sequentially going bytes with
 		// ABC starting at 65 and XYZ at 88, subtracting that -1 gives
 		// comparable 1,2,3 sequences
-		sum1 += score(in[0] - 64, in[2] - 87)
+		sum1 += score(in[0]-64, in[2]-87)
 
 		// for part 2 the second column is round outcome rather than
 		// shape so pick() right shape to play to that expected outcome
-		sum2 += score(in[0] - 64, pick(in[0] - 64, in[2] - 87))
+		sum2 += score(in[0]-64, pick(in[0]-64, in[2]-87))
 	}
 	if err := s.Err(); err != nil {
 		log.Fatal(err)

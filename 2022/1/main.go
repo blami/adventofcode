@@ -5,14 +5,14 @@
 package main
 
 import (
-	"os"
 	"bufio"
-	"strconv"
 	"log"
+	"os"
+	"strconv"
 )
 
 type Ranking struct {
-	pos [3]int	
+	pos [3]int
 }
 
 func (r *Ranking) Push(v int) {
@@ -30,7 +30,7 @@ func (r *Ranking) Push(v int) {
 }
 
 func (r *Ranking) Sum() int {
-	return	r.pos[0] + r.pos[1] + r.pos[2]
+	return r.pos[0] + r.pos[1] + r.pos[2]
 }
 
 func (r *Ranking) Top() int {
@@ -40,7 +40,7 @@ func (r *Ranking) Top() int {
 func main() {
 
 	rank := Ranking{}
-	cur := 0	// current elf acummulator
+	cur := 0 // current elf acummulator
 
 	s := bufio.NewScanner(os.Stdin)
 	for s.Scan() {
