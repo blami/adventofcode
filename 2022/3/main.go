@@ -1,4 +1,4 @@
-// Read input from stdin
+// Read input from stdin and find sum of item priorities in backpacks.
 
 package main
 
