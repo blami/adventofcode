@@ -25,6 +25,10 @@ func main() {
 	fp := 0 // position of first packet marker (begin)
 	fm := 0 // position of first message marker (begin)
 
+	// NOTE: this algorithm is incorrect in case input will be bigger than
+	// scanner buffer (there will be more s.Scan()s) and marker will be at
+	// overlap of them as we use slice of the buffer itself as moving window.
+
 	p := 0 // position in scanned buffer
 	s := bufio.NewScanner(os.Stdin)
 	for s.Scan() {
