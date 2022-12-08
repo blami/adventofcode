@@ -1,4 +1,4 @@
-// Read input from stdin and find overlapping sections
+// Read input from stdin and find overlapping sections.
 
 package main
 

@@ -1,4 +1,5 @@
-// Read the input signal from stdin and find first packet and message marker.
+// Read input from stdin and find the first packet and message marker in
+// signal.
 
 package main
 
@@ -8,7 +9,7 @@ import (
 	"os"
 )
 
-// Check given window for unique characters
+// Check given window for unique characters.
 func check(win []byte) bool {
 	seen := make(map[byte]bool)
 	for _, b := range win {
@@ -25,34 +26,28 @@ func main() {
 	fp := 0 // position of first packet marker (begin)
 	fm := 0 // position of first message marker (begin)
 
-	// NOTE: this algorithm is incorrect in case input will be bigger than
-	// scanner buffer (there will be more s.Scan()s) and marker will be at
-	// overlap of them as we use slice of the buffer itself as moving window.
-
-	p := 0 // position in scanned buffer
+	// NOTE: This assumes the entire signal can be read in single s.Scan()
+	// which worked for the excercise. If it was not case transition between
+	// buf needs to be handled explicitely.
 	s := bufio.NewScanner(os.Stdin)
-	for s.Scan() {
-		buf := s.Bytes()
-		for i, _ := range buf {
-			// packet
-			if fp == 0 && i < len(buf)-4 && check(buf[i:i+4]) {
-				if fp == 0 {
-					fp = p + i
-				}
-			}
-
-			// message
-			if fm == 0 && i < len(buf)-14 && check(buf[i:i+14]) {
-				if fm == 0 {
-					fm = p + i
-				}
-			}
-
-			if fp != 0 && fm != 0 {
-				break
+	s.Scan()
+	buf := s.Bytes()
+	for i, _ := range buf {
+		// packet
+		if fp == 0 && i < len(buf)-4 && check(buf[i:i+4]) {
+			if fp == 0 {
+				fp = i
 			}
 		}
-		p = len(buf)
+		// message
+		if fm == 0 && i < len(buf)-14 && check(buf[i:i+14]) {
+			if fm == 0 {
+				fm = i
+			}
+		}
+		if fp != 0 && fm != 0 {
+			break
+		}
 	}
 	if err := s.Err(); err != nil {
 		log.Fatal(err)

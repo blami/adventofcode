@@ -1,5 +1,5 @@
-// Read input from stdin, build directory tree based on command output and find
-// smallest directories sizes and directory to remove.
+// Read input from stdin, build directory tree based on captured output and
+// find the smallest directory sizes and smallest enough directory to remove.
 
 package main
 
@@ -99,7 +99,7 @@ func main() {
 		// directory
 		case l[0] == "dir":
 			c.Mkdir(l[1])
-		// files size
+		// file size
 		case l[0] != "$" && l[0] != "dir":
 			fsz, _ := strconv.Atoi(l[0])
 			c.Grow(fsz)
@@ -109,14 +109,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	nstsz := 0 // total size of directories smaller than 100000
+	totsz := 0 // total size of directories smaller than 100000
 
 	rmdsz := r.Size()          // smallest directory to remove size found
 	remain := 70000000 - rmdsz // remaining free space
 
 	r.Walk(func(d *Dir) {
 		if d.Size() <= 100000 {
-			nstsz += d.Size()
+			totsz += d.Size()
 		}
 
 		dsz := d.Size()
@@ -127,7 +127,7 @@ func main() {
 		}
 	})
 
-	log.Print(nstsz)
+	log.Print(totsz)
 	log.Print(rmdsz)
 
 }

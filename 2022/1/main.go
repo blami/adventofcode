@@ -1,6 +1,6 @@
 // Read input from stdin and calculate total calories per elf. Store
 // top three highest number of calories in rank and print first position
-// (part 1) and sum of first three positions (part 2).
+// and sum of first three positions.
 
 package main
 
@@ -11,48 +11,47 @@ import (
 	"strconv"
 )
 
-type Ranking struct {
-	pos [3]int
-}
+// Type alias to hold first 3 positions in elf ranking.
+type Ranking [3]int
 
+// Push value into ranking, if not good enough it will fall through.
 func (r *Ranking) Push(v int) {
 	switch {
-	case v >= r.pos[0]:
-		r.pos[2] = r.pos[1]
-		r.pos[1] = r.pos[0]
-		r.pos[0] = v
-	case v >= r.pos[1]:
-		r.pos[2] = r.pos[1]
-		r.pos[1] = v
-	case v >= r.pos[2]:
-		r.pos[2] = v
+	case v >= (*r)[0]:
+		(*r)[2] = (*r)[1]
+		(*r)[1] = (*r)[0]
+		(*r)[0] = v
+	case v >= (*r)[1]:
+		(*r)[2] = (*r)[1]
+		(*r)[1] = v
+	case v >= (*r)[2]:
+		(*r)[2] = v
 	}
 }
 
-func (r *Ranking) Sum() int {
-	return r.pos[0] + r.pos[1] + r.pos[2]
+// Return top place.
+func (r *Ranking) Top() int {
+	return (*r)[0]
 }
 
-func (r *Ranking) Top() int {
-	return r.pos[0]
+// Return sum of top three places.
+func (r *Ranking) Sum() int {
+	return (*r)[0] + (*r)[1] + (*r)[2]
 }
 
 func main() {
 
-	rank := Ranking{}
+	r := Ranking{}
 	cur := 0 // current elf acummulator
 
 	s := bufio.NewScanner(os.Stdin)
 	for s.Scan() {
 		l := s.Text()
 		if l == "" {
-			rank.Push(cur)
+			r.Push(cur)
 			cur = 0
 		} else {
-			v, err := strconv.Atoi(l)
-			if err != nil {
-				log.Fatal(err)
-			}
+			v, _ := strconv.Atoi(l) // assuming good input
 			cur += v
 		}
 	}
@@ -60,6 +59,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Print(rank.Top())
-	log.Print(rank.Sum())
+	log.Print(r.Top())
+	log.Print(r.Sum())
 }
