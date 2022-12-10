@@ -23,34 +23,24 @@ type Monkey struct {
 
 // Evaluate given operation given the old value and return new value.
 func eval(op string, old int) int {
-	a, b := 0, 0
-	var err error
+	opr := [2]int{} // operands
 	l := strings.Split(op, " ")
-	if l[0] == "old" {
-		a = old
-	} else {
-		a, err = strconv.Atoi(l[0])
-		if err != nil {
-			log.Fatal("wrong operand a: ", l)
-		}
-	}
-	if l[2] == "old" {
-		b = old
-	} else {
-		b, err = strconv.Atoi(l[2])
-		if err != nil {
-			log.Fatal("wrong operand b: ", l)
+	for i, j := range []int{0, 2} {
+		if l[j] == "old" {
+			opr[i] = old
+		} else {
+			opr[i], _ = strconv.Atoi(l[j])
 		}
 	}
 	switch l[1] {
 	case "+":
-		return a + b
+		return opr[0] + opr[1]
 	case "-":
-		return a - b
+		return opr[0] - opr[1]
 	case "*":
-		return a * b
+		return opr[0] * opr[1]
 	case "/":
-		return a / b
+		return opr[0] / opr[1]
 	default:
 		log.Fatal("operation ", l[1], " not implemented!")
 	}
@@ -98,6 +88,9 @@ func most(out []Monkey) int {
 func main() {
 
 	monkeys := []Monkey{}
+	// In part 2 worry level numbers easily overflow int, to manage we
+	// calculate least common multiplier of all divisors and instead of /3
+	// (part 1) we %lcm to keep worry levels "right" but within int range.
 	lcm := 1 // least common multiple of test divisors
 
 	s := bufio.NewScanner(os.Stdin)
@@ -106,9 +99,9 @@ func main() {
 	for s.Scan() {
 		l := s.Text()
 
-		// NOTE: assuming good input only; not particularly proud about this
+		// NOTE: assuming good input only and monkeys going in order from 0 to
+		// N; not particularly proud about this.
 		if len(l) > 1 && l[0] != ' ' { // top level Monkey section
-			n, _ := strconv.Atoi(strings.Split(l[:len(l)-1], " ")[1])
 			m := Monkey{}
 			for {
 				s.Scan()
@@ -127,10 +120,6 @@ func main() {
 				case l[:2] == "Te": // Test
 					// Seems to be always "divisble by" so save only the integer
 					m.Test, _ = strconv.Atoi(strings.Split(strings.Split(l, ":")[1], " ")[3])
-					// NOTE: for part 2 worry level numbers easily overflow
-					// int, to manage we calculate least common multiplier of
-					// all divisors and instead of /3 (part 1) we %lcm to keep
-					// worry levels "right" but within int range.
 					lcm *= m.Test
 				case l[:2] == "If": // Conditions
 					ll := strings.Split(l, " ")
@@ -155,7 +144,6 @@ func main() {
 	}
 
 	// run monkey business
-	// NOTE: copy monkeys slice for part1 and part2
 	out1 := business(append([]Monkey{}, monkeys...), 20, func(w int) int { return w / 3 })
 	out2 := business(append([]Monkey{}, monkeys...), 10000, func(w int) int { return w % lcm })
 
