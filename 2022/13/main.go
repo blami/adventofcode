@@ -49,7 +49,7 @@ func isl(s string) bool {
 
 // Compare two packets recursively. Outcome can be either 1 which is good order
 // left side being "lower" than right side or -1 bad order or 0 for equal.
-func cmp(ls, rs string, d int) bool {
+func cmp(ls, rs string, d int) int {
 	l, r := split(ls), split(rs)
 	cl := len(l)
 	if len(r) < cl {
