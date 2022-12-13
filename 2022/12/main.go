@@ -8,15 +8,20 @@ import (
 	"fmt"
 	"log"
 	"os"
+
+	"image"
 )
 
 // X,Y alias.
 type XY [2]int
 
+// Flag to produce gif image (slooow)
+var vis bool
+
 // Debug prints of current state.
 // NOTE: I missed out very important sentence in riddle assignment which led me
 // to extensive debugging of correct program...
-func debug(m [][]int, v map[XY]bool, d map[XY]int) {
+func debugDump(m [][]int, v map[XY]bool, d map[XY]int) {
 	var dm, vm, dim string
 
 	for y, l := range m {
@@ -51,6 +56,8 @@ func bfs(m [][]int, sp, ep XY, eph int, cross func(m [][]int, cp, np XY) bool) i
 	v := map[XY]bool{} // map of XY:visited
 	di := map[XY]int{} // map of XY:distance
 
+	var imgs []*image.Paletted
+
 	v[sp] = true // set start as visited
 	di[sp] = 0   // set distance to S as 0
 
@@ -68,8 +75,15 @@ func bfs(m [][]int, sp, ep XY, eph int, cross func(m [][]int, cp, np XY) bool) i
 		cp := q[0]
 		q = q[1:]
 
+		if vis {
+			imgs = append(imgs, render(m, v, sp, ep, cp))
+		}
+
 		// if eph is > -1 break out and return
 		if eph > -1 && m[cp[1]][cp[0]] == eph {
+			if vis {
+				saveGif("out2.gif", imgs)
+			}
 			return di[cp]
 		}
 
@@ -88,9 +102,12 @@ func bfs(m [][]int, sp, ep XY, eph int, cross func(m [][]int, cp, np XY) bool) i
 				di[np] = di[cp] + 1
 				q = append(q, np)
 			}
-			//log.Print(cp, np, q)
-			//debug(m, v, di)
+			//debugDump(m, v, di)
 		}
+	}
+
+	if vis {
+		saveGif("out1.gif", imgs)
 	}
 
 	return di[ep]
@@ -101,6 +118,8 @@ func main() {
 	m := [][]int{} // map data [Y][X] normalized to a=1 z=26
 	sp := XY{}     // start position
 	ep := XY{}     // end position
+
+	vis = os.Getenv("DEBUG") != ""
 
 	s := bufio.NewScanner(os.Stdin)
 	for s.Scan() {
