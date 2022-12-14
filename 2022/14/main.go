@@ -14,6 +14,8 @@ import (
 // XY alias
 type XY [2]int
 
+var vis bool
+
 // Print cave current state.
 func debug(c [][]byte) {
 	// find nice boundaries
@@ -73,6 +75,8 @@ func sandfall(c [][]byte, abyss bool) bool {
 }
 
 func main() {
+
+	vis = os.Getenv("VIS") != ""
 
 	w, h := 500, 0 // sand flows from 500,0 so we need at least that size
 	rl := [][]XY{} // rock lines
@@ -147,6 +151,12 @@ func main() {
 	na, nf := 0, 0
 	for sandfall(c, true) { // part 1 find how much until abyss
 		na++
+		if vis {
+			render(c)
+		}
+	}
+	if vis {
+		saveGif("out1.gif")
 	}
 	debug(c)
 	// remove sand from part 1
