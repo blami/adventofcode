@@ -37,7 +37,6 @@ func render(c [][]byte) {
 
 	h := len(c)
 	w := r - l + 1
-	log.Print(w, h, l, r, len(c[0][l:r+1]), len(c))
 
 	img := image.NewPaletted(image.Rect(0, 0, w*s, h*s), palette.Plan9)
 	for y := range c {
