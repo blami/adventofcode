@@ -3,16 +3,16 @@
 package main
 
 import (
-	"os"
-	"log"
 	"image"
 	"image/color"
 	"image/color/palette"
 	"image/gif"
+	"log"
+	"os"
 )
 
 // Global store
-var imgs[] *image.Paletted
+var imgs []*image.Paletted
 
 // Render cave to image.
 // BUG: Nice boundaries won't work with part 2 as it will stretch them on the
@@ -40,7 +40,7 @@ func render(c [][]byte) {
 
 	img := image.NewPaletted(image.Rect(0, 0, w*s, h*s), palette.Plan9)
 	for y := range c {
-		for x, cc := range c[y][l:r+1] {
+		for x, cc := range c[y][l : r+1] {
 			// decide color, default is black 'cause cave
 			cl := palette.Plan9[0].(color.RGBA)
 			switch cc {
@@ -53,7 +53,7 @@ func render(c [][]byte) {
 			}
 			for ry := 0; ry < s; ry++ {
 				for rx := 0; rx < s; rx++ {
-					img.Set((x*s) + rx, (y*s) + ry, cl)
+					img.Set((x*s)+rx, (y*s)+ry, cl)
 				}
 			}
 		}
@@ -67,17 +67,17 @@ func clearGif() {
 }
 
 func saveGif(fn string) {
-	f, _ := os.OpenFile(fn, os.O_WRONLY | os.O_CREATE, 0644)
+	f, _ := os.OpenFile(fn, os.O_WRONLY|os.O_CREATE, 0644)
 	defer f.Close()
 
 	delay := []int{}
-	for range(imgs) {
+	for range imgs {
 		delay = append(delay, 1) // 1/100s
 	}
 
 	err := gif.EncodeAll(f, &gif.GIF{
-		Image: imgs,
-		Delay: delay,
+		Image:     imgs,
+		Delay:     delay,
 		LoopCount: 1, // will actually loop 2x; thanks Netscape
 	})
 	if err != nil {

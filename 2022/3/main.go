@@ -4,10 +4,11 @@ package main
 
 import (
 	"bufio"
-	"golang.org/x/exp/slices"
 	"log"
 	"os"
 	"unicode"
+
+	"golang.org/x/exp/slices"
 )
 
 // Find items shared between two containers (be it whole rucksacks or their
