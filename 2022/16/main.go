@@ -1,3 +1,6 @@
+// Read input from stdin and find the combination of open valves in 30 minutes
+// and in 26 minutes and 2 actors.
+
 package main
 
 import (
