@@ -12,8 +12,8 @@ import (
 
 func main() {
 	sch := []string{}
-	w:= 0
-	h:= 0
+	w := 0
+	h := 0
 	sum := 0
 	sum2 := 0
 
@@ -21,7 +21,9 @@ func main() {
 	for s.Scan() {
 		sch = append(sch, s.Text())
 		// assuming all lines have same length
-		if w == 0 { w = len(s.Text()) }
+		if w == 0 {
+			w = len(s.Text())
+		}
 		h += 1
 	}
 	if err := s.Err(); err != nil {
@@ -34,21 +36,21 @@ func main() {
 			// if there is part start fishing numbers
 			if sch[y][x] != '.' && !unicode.IsDigit(rune(sch[y][x])) {
 				/*
-				fmt.Printf("found %s at %d:%d\n", string(sch[y][x]), x, y)
-				// debug printout
-				for ddy := y - 1; ddy <= y + 1; ddy++ {
-					if ddy < 0 || ddy > h - 1 { break }
-					for i := 0; i < len(sch[ddy]); i++ {
-						if i == x && ddy == y {
-							fmt.Print("\033[31m")
+					fmt.Printf("found %s at %d:%d\n", string(sch[y][x]), x, y)
+					// debug printout
+					for ddy := y - 1; ddy <= y + 1; ddy++ {
+						if ddy < 0 || ddy > h - 1 { break }
+						for i := 0; i < len(sch[ddy]); i++ {
+							if i == x && ddy == y {
+								fmt.Print("\033[31m")
+							}
+							fmt.Print(string(sch[ddy][i]))
+							if i == x && ddy == y {
+								fmt.Print("\033[0m")
+							}
 						}
-						fmt.Print(string(sch[ddy][i]))
-						if i == x && ddy == y {
-							fmt.Print("\033[0m")
-						}
+						fmt.Println()
 					}
-					fmt.Println()
-				}
 				*/
 
 				// try all 8 directions
@@ -57,24 +59,30 @@ func main() {
 				for dy := -1; dy <= 1; dy++ {
 					for dx := -1; dx <= 1; dx++ {
 						// skip the part itself
-						if dx == 0 && dy == 0 { continue }
+						if dx == 0 && dy == 0 {
+							continue
+						}
 						// bounds check
-						if x + dx < 0 || y + dy < 0 || x + dx >= w || y + dy >= h { continue }
+						if x+dx < 0 || y+dy < 0 || x+dx >= w || y+dy >= h {
+							continue
+						}
 						// skip anything we saw already
 						skip := false
 						for _, s := range seen {
-							if s[0] == x + dx && s[1] == y + dy {
+							if s[0] == x+dx && s[1] == y+dy {
 								skip = true
 								break
 							}
 						}
-						if skip { continue }
-						if unicode.IsDigit(rune(sch[y + dy][x + dx])) {
+						if skip {
+							continue
+						}
+						if unicode.IsDigit(rune(sch[y+dy][x+dx])) {
 							// found number, seek to its begining and parse it
 							// to the end
 							n := 0
 							ns := 0 // number start x
-							for i := x+dx; unicode.IsDigit(rune(sch[y+dy][i])) && i >= 0; i-- {
+							for i := x + dx; unicode.IsDigit(rune(sch[y+dy][i])) && i >= 0; i-- {
 								ns = i
 								if i == 0 {
 									break
@@ -83,9 +91,9 @@ func main() {
 							nx := ns
 							for nx = ns; unicode.IsDigit(rune(sch[y+dy][nx])) && nx < w; nx++ {
 								// add coords to seen
-								seen = append(seen, []int{nx, y+dy})
-								n = n * 10 + int(sch[y + dy][nx] - 48)
-								if nx == w - 1 {
+								seen = append(seen, []int{nx, y + dy})
+								n = n*10 + int(sch[y+dy][nx]-48)
+								if nx == w-1 {
 									break
 								}
 							}
