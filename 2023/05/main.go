@@ -28,7 +28,9 @@ func main() {
 			}
 			continue
 		}
-		if l == "" { continue }
+		if l == "" {
+			continue
+		}
 		if !unicode.IsDigit(rune(l[0])) {
 			alm = append(alm, [][]int{})
 			m++
@@ -52,7 +54,7 @@ func main() {
 		// go through map
 		for _, sec := range alm {
 			for _, row := range sec {
-				if loc >= row[1] && loc < (row[1] + row[2]) {
+				if loc >= row[1] && loc < (row[1]+row[2]) {
 					df := (loc - row[1])
 					loc = row[0] + df
 					break
@@ -69,17 +71,17 @@ func main() {
 	locmin2 := -1
 	var wg sync.WaitGroup
 	mu := &sync.Mutex{}
-	for i := 0; i < len(seeds) - 2; i+=2 {
+	for i := 0; i < len(seeds)-2; i += 2 {
 		// parallel bruteforce
 		wg.Add(1)
 		go func(s int, l int) {
 			defer wg.Done()
 			locminsub := -1
-			for seed := s; seed < s + l; seed++ {
+			for seed := s; seed < s+l; seed++ {
 				loc := seed
 				for _, sec := range alm {
 					for _, row := range sec {
-						if loc >= row[1] && loc < (row[1] + row[2]) {
+						if loc >= row[1] && loc < (row[1]+row[2]) {
 							df := (loc - row[1])
 							loc = row[0] + df
 							break
@@ -98,7 +100,7 @@ func main() {
 		}(seeds[i], seeds[i+1])
 	}
 	wg.Wait()
-	
+
 	fmt.Println(locmin)
 	fmt.Println(locmin2)
 }
