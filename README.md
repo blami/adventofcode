@@ -4,9 +4,9 @@ Repository with my solutions of [Advent of Code](https://adventofcode.com/)
 programming puzzles.
 
 ## Usage
-I restrict myself to use of Go standard library. All solutions are meant as
-standalone binaries that read input from `stdin` and print usually 2 lines
-(solutions of part 1 and 2) to the `stdout`.
+I restrict myself to use of Go standard library (and sometimes `exp`). All
+solutions are meant as standalone binaries that read input from `stdin` and
+print usually 2 lines (solutions of part 1 and 2) to the `stdout`.
 
 To run any of the solutions do simply run:
 `cat ./YYYY/DD/test.txt | go run ./YYYY/DD`
