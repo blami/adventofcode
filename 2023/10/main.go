@@ -78,13 +78,9 @@ func main() {
 		switch m[cur.Y][cur.X] {
 		// -,| - continue moving in same direction
 		case 'L', '7':
-			dx := dir[0].X
-			dir[0].X = dir[0].Y
-			dir[0].Y = dx
+			dir[0].X, dir[0].Y = dir[0].Y, dir[0].X
 		case 'J', 'F':
-			dx := dir[0].X
-			dir[0].X = dir[0].Y * -1
-			dir[0].Y = dx * -1
+			dir[0].X, dir[0].Y = dir[0].Y*-1, dir[0].X*-1
 		case '.':
 			panic("oops")
 		case 'S':
