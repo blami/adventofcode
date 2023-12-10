@@ -18,7 +18,8 @@ func main() {
 	m := [][]rune{}
 	w, h := 0, 0
 	st := XY{}
-	sum := 0 // part 2
+	// part 2
+	sum := 0
 
 	s := bufio.NewScanner(os.Stdin)
 	for s.Scan() {
@@ -38,19 +39,25 @@ func main() {
 
 	dir := []XY{}
 	// find directions of move
-	// BUG: This is not correct as S might be attached to L7JF in multiple
-	// directions... it worked for my input but breaks test5.txt
-	if st.X-1 >= 0 && m[st.Y][st.X-1] == '-' {
+	if st.X-1 >= 0 && (m[st.Y][st.X-1] == '-' || m[st.Y][st.X-1] == 'L') {
 		dir = append(dir, XY{-1, 0})
 	}
-	if st.X+1 < w && m[st.Y][st.X+1] == '-' {
+	if st.X+1 < w && (m[st.Y][st.X+1] == '-' || m[st.Y][st.X+1] == '7') {
 		dir = append(dir, XY{1, 0})
 	}
-	if st.Y-1 >= 0 && m[st.Y-1][st.X] == '|' {
+	if st.Y-1 >= 0 && (m[st.Y-1][st.X] == '|' || m[st.Y-1][st.X] == 'F') {
 		dir = append(dir, XY{0, -1})
 	}
-	if st.Y+1 < h && m[st.Y+1][st.X] == '|' {
+	if st.Y+1 < h && (m[st.Y+1][st.X] == '|' || m[st.Y+1][st.X] == 'J') {
 		dir = append(dir, XY{0, 1})
+	}
+	// part 2
+	// fix for S being border too
+	sb := true
+	for _, d := range dir {
+		if d.X != 0 {
+			sb = false
+		}
 	}
 
 	cur := XY{st.X, st.Y}
@@ -67,7 +74,7 @@ func main() {
 		a[cur.Y][cur.X] = '#'
 		cur.X += dir[0].X
 		cur.Y += dir[0].Y
-		fmt.Println("moving to", dir[0], cur.X, cur.Y, string(m[cur.Y][cur.X]), "step", step)
+		//fmt.Println("moving to", dir[0], cur.X, cur.Y, string(m[cur.Y][cur.X]), "step", step)
 		switch m[cur.Y][cur.X] {
 		// -,| - continue moving in same direction
 		case 'L', '7':
@@ -86,35 +93,12 @@ func main() {
 		}
 	}
 
-	// BUG: Flood fill won't work because of pipe squeezing
-	/*
-		done = false
-		for !done {
-			done = true
-			for y := range(a) {
-				for x := range(a[y]) {
-					// try to search in all directions
-					if a[y][x] == '.' {
-						if (y==0) || (y==h-1) || (x > 0 && a[y][x - 1] == ' ') || (x < w - 1 && a[y][x + 1] == ' ') || (y > 0 && a[y - 1][x] == ' ') || (y < h-1 && a[y + 1][x] == ' ') {
-							a[y][x] = ' '
-							done = false
-						}
-					}
-				}
-			}
-		}
-		for _, l := range(a) {
-			sum += strings.Count(string(l), ".")
-		}
-	*/
 	// scan lines and check parity of |JL's lol
 	for y := range m {
 		in := false
 		for x := range m[y] {
 			if a[y][x] == '#' {
-				// BUG: This is not entirely correct as S might be used as | as
-				// well but not in my input.
-				if m[y][x] == '|' || m[y][x] == 'J' || m[y][x] == 'L' {
+				if m[y][x] == '|' || m[y][x] == 'J' || m[y][x] == 'L' || (sb && m[y][x] == 'S') {
 					in = !in
 				}
 			} else {
@@ -129,11 +113,13 @@ func main() {
 	}
 
 	// debug
-	for y := range m {
-		fmt.Print(string(m[y]))
-		//fmt.Print(" ", string(a[y]))
-		fmt.Println()
-	}
+	/*
+		for y := range m {
+			fmt.Print(string(m[y]))
+			//fmt.Print(" ", string(a[y]))
+			fmt.Println()
+		}
+	*/
 
 	fmt.Println(step / 2)
 	fmt.Println(sum)
