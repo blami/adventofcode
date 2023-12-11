@@ -7,6 +7,8 @@ import (
 	"log"
 	"os"
 	"strings"
+
+	"image"
 )
 
 type XY struct {
@@ -20,6 +22,11 @@ func main() {
 	st := XY{}
 	// part 2
 	sum := 0
+	// visualization makes run slow
+	vis := os.Getenv("DEBUG") != ""
+	vs := []int{1, 1}
+	vss := 5
+	var imgs []*image.Paletted
 
 	s := bufio.NewScanner(os.Stdin)
 	for s.Scan() {
@@ -35,6 +42,13 @@ func main() {
 	}
 	if err := s.Err(); err != nil {
 		log.Fatal(err)
+	}
+	// vis
+	if vis {
+		if w > 100 { // BIG input
+			vs = []int{50, 5}
+			vss = 2
+		}
 	}
 
 	dir := []XY{}
@@ -71,6 +85,11 @@ func main() {
 	done := false
 	for !done {
 		step++
+		// vis
+		if vis && step%vs[0] == 0 {
+			imgs = append(imgs, render(m, a, st, cur, XY{-1, -1}, vss))
+		}
+
 		a[cur.Y][cur.X] = '#'
 		cur.X += dir[0].X
 		cur.Y += dir[0].Y
@@ -105,6 +124,11 @@ func main() {
 					m[y][x] = 'O'
 				}
 			}
+
+			// vis
+			if vis && (y%vs[1] == 0 || y == h-1) && x == w-1 {
+				imgs = append(imgs, render(m, a, st, XY{-1, -1}, XY{x, y}, vss))
+			}
 		}
 	}
 
@@ -116,6 +140,9 @@ func main() {
 			fmt.Println()
 		}
 	*/
+	if vis {
+		saveGif("out.gif", imgs)
+	}
 
 	fmt.Println(step / 2)
 	fmt.Println(sum)
