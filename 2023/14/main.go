@@ -169,7 +169,7 @@ func main() {
 		}
 	}
 	i := (cycles - loop_sti) % loop_l
-	sum2 := load(cach[loop_stk+i])
+	sum2 := load(cach[loop_stk+i-1])
 
 	fmt.Println(sum)
 	fmt.Println(sum2)
