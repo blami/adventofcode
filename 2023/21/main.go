@@ -50,7 +50,6 @@ func qe(v []int, x int) int {
 	c := v[0]
 	fmt.Printf("solve: %d*x^2 + %d*x + %d (x=%d)\n", a, b, c, x)
 	return a*x*x + b*x + c
-	//return a[0] + (a[1] - a[0]) * n + (n * (n-1)/2) * ((a[2]-a[1]) - (a[1]-a[0]))
 }
 
 func main() {
