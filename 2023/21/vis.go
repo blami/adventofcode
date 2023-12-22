@@ -13,13 +13,31 @@ import (
 
 var imgs []*image.Paletted
 
-// Render map to image.
-func renderGif(m [][]rune, h []XY, hn []XY, s int) {
-	img := image.NewPaletted(image.Rect(0, 0, len(m[0])*s, len(m)*s), palette.Plan9)
-	for y := range m {
-		for x := range m[y] {
+// Render map to image. Argument wr is wrapping range, how many full maps to 0
+// left, 1 right, 2 up, 3 bottom should be rendered.
+func renderGif(m [][]rune, h []XY, hn []XY, s int, ra [4]int) {
+	if os.Getenv("DEBUG") == "" {
+		return
+	}
+	ax := 0 - ra[0]*len(m[0])
+	aw := ra[1] * len(m[0])
+	ay := 0 - ra[2]*len(m)
+	ah := ra[3] * len(m)
+
+	// adjust in-image width and height so they are always positive
+	iw := (ra[0] + ra[1]) * len(m[0])
+	ih := (ra[2] + ra[3]) * len(m)
+	// offset
+	ox := ra[0] * len(m[0])
+	oy := ra[2] * len(m)
+
+	//fmt.Println("size", aw,ah, "xy", ax, ay, "isize", iw, ih, "oxy", ox, oy)
+	img := image.NewPaletted(image.Rect(0, 0, iw*s, ih*s), palette.Plan9)
+
+	for y := ay; y < ah; y++ {
+		for x := ax; x < aw; x++ {
 			c := color.RGBA{0, 0, 0, 0xff}
-			if m[y][x] != '.' {
+			if m[tran(y, len(m))][tran(x, len(m[0]))] != '.' {
 				c = color.RGBA{92, 92, 92, 0xff}
 			}
 			for _, xy := range h {
@@ -32,10 +50,14 @@ func renderGif(m [][]rune, h []XY, hn []XY, s int) {
 					c = color.RGBA{255, 0, 0, 0xff}
 				}
 			}
+			// borders
+			if (aw > len(m[0]) && x%len(m[0]) == 0) || (ah > len(m) && y%len(m) == 0) {
+				c = color.RGBA{0, 255, 0, 0xff}
+			}
 			// draw sxs rectangle so the image is "readable"
 			for ry := 0; ry < s; ry++ {
 				for rx := 0; rx < s; rx++ {
-					img.Set((x*s)+rx, (y*s)+ry, c)
+					img.Set((ox+x)*s+rx, (oy+y)*s+ry, c)
 				}
 			}
 		}
@@ -44,7 +66,10 @@ func renderGif(m [][]rune, h []XY, hn []XY, s int) {
 	imgs = append(imgs, img)
 }
 
-func saveGif(fn string) {
+func saveGif(fn string, empty bool) {
+	if os.Getenv("DEBUG") == "" {
+		return
+	}
 	f, _ := os.OpenFile(fn, os.O_WRONLY|os.O_CREATE, 0644)
 	defer f.Close()
 
@@ -61,5 +86,7 @@ func saveGif(fn string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	imgs = nil
+	if empty {
+		imgs = nil
+	}
 }

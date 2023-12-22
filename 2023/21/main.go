@@ -97,11 +97,13 @@ func main() {
 				}
 			}
 		}
+		renderGif(m, h, hn, 2, [4]int{0, 1, 0, 1})
 		h = hn
 		// DIAMONDS DIAMONDS DIAMONDS
 		//debug(m, h, i)
 	}
 	cov1 = len(h)
+	saveGif("out.gif", true)
 
 	// part 2
 	// solve points for 0, 1 and 2... see q()
@@ -129,17 +131,20 @@ func main() {
 		// the period of repeat from 65 is width of map (131 for my input)
 		// so a,b and c are at i=65, i=65+131 and i=65+2*131
 		if i%len(m[0]) == st%len(m[0]) {
-			//fmt.Println("i", i, "len(h)", len(h))
+			fmt.Println("i", i, "len(h)", len(h))
 			coef = append(coef, len(h))
+			saveGif("out2.gif", false)
 		}
 		if len(coef) == 3 {
 			break
 		}
+		renderGif(m, h, hn, 2, [4]int{1, 2, 1, 2})
 		h = hn
 		//debug(m, h, i)
 	}
-
 	cov2 := qe(coef, st/len(m[0]))
+	saveGif("out2.gif", true)
+
 	fmt.Println(cov1)
 	fmt.Println(cov2)
 }
